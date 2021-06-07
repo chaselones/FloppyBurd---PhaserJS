@@ -32,6 +32,7 @@ const config = {
     }
   },
 
+  // Set scene to play scene, passing in the shared config
   scene: [new PlayScene(SHARED_CONFIG)]
 }
 

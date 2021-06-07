@@ -82,18 +82,22 @@ class PlayScene extends Phaser.Scene {
 
             this.placePipes(upperPipe, lowerPipe)
         }
-        this.pipes.setVelocityX(-200)
+        this.pipes.setVelocityX(-PIPE_VELOCITY)
     }
 
+    // Colliders
     createColliders() {
         this.physics.add.collider(this.pipes, this.bird, this.gameOver, null, this)
     }
 
+
+    // Inputs
     handleInput() {
         this.input.on('pointerdown', this.FLAP, this)
         this.input.keyboard.on('keydown_SPACE', this.FLAP, this)
     }
 
+    // Bird ground boundary
     checkBoundaries() {
         if (this.bird.getBounds().bottom >= this.config.height || this.bird.y <= 0 - this.bird.height) {
             this.gameOver();
@@ -102,14 +106,16 @@ class PlayScene extends Phaser.Scene {
 
     placePipes(top, bottom) {
         const rightMostX = this.getRightMostPipe()
-        // Define value to generate random distance between pipes
+        // Vertical Spacing
         const pipeGap = Phaser.Math.Between(...this.pipeGapRange)
 
+        //Horizontal spacing
         const pipeSpacing = Phaser.Math.Between(...this.pipeSpacingRange)
 
         // Define value to position the top pipe dynamically, considering the scene and the pipeGap
         const topPipePosY = Phaser.Math.Between(this.topPipePosYRange[0], this.topPipePosYRange[1] - pipeGap)
 
+        //Positioning pipes
         top.x = rightMostX + pipeSpacing
         top.y = topPipePosY
 
@@ -117,6 +123,7 @@ class PlayScene extends Phaser.Scene {
         bottom.y = top.y + pipeGap
     }
 
+    // Get right most pipe, to position next pipes
     getRightMostPipe() {
         let rightMostX = 0
         this.pipes.getChildren().forEach((pipe) => {
@@ -126,6 +133,7 @@ class PlayScene extends Phaser.Scene {
         return rightMostX
     }
 
+    // Recycle and reposition pipes
     recyclePipes() {
         const tempPipes = []
         this.pipes.getChildren().forEach(pipe => {
@@ -139,17 +147,20 @@ class PlayScene extends Phaser.Scene {
         })
     }
 
+    // THIS IS WHERE ALL THE MAGIC LIES
     FLAP() {
         console.log("FLAPPING")
         this.bird.body.velocity.y += -FLAP_VELOCITY
     }
 
+    // To reset the player position and velocity
     resetPlayer() {
         this.bird.x = this.config.startPos.x
         this.bird.y = this.config.startPos.y
         this.bird.body.velocity.y = 0
     }
 
+    // THIS IS WHERE THE MAGIC DIES
     gameOver() {
         this.physics.pause()
         this.bird.setTint(0xEE4824)
